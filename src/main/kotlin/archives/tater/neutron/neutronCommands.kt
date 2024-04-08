@@ -6,8 +6,9 @@ import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.serialization.Codec
-import net.minecraft.command.CommandException
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.command.argument.EnumArgumentType
@@ -31,6 +32,9 @@ enum class Mode(val id: String) : StringIdentifiable {
     class ArgumentType : EnumArgumentType<Mode>(CODEC, ::values)
 }
 
+private val globalAlreadySetException = DynamicCommandExceptionType { mode -> Text.translatable("command.neutron.global.${mode}.fail") }
+private val playerAlreadySetException = Dynamic2CommandExceptionType { player, mode -> Text.translatable("command.neutron.player.${mode}.fail", player) }
+
 fun neutronCommands(
     dispatcher: CommandDispatcher<ServerCommandSource>,
     registryAccess: CommandRegistryAccess,
@@ -50,7 +54,7 @@ fun neutronCommands(
                 val enable = mode.toBoolean()
 
                 NeutronState[it].apply {
-                    if (globalEnabled == enable) throw CommandException(Text.translatable("command.neutron.global.${mode.id}.fail"))
+                    if (globalEnabled == enable) throw globalAlreadySetException.create(mode.id)
                     globalEnabled = enable
                 }
 
@@ -94,12 +98,7 @@ fun neutronCommands(
                             }
                         }
                     }.let { success ->
-                        if (!success) throw CommandException(
-                            Text.translatable(
-                                "command.neutron.player.${mode.id}.fail",
-                                player.name
-                            )
-                        )
+                        if (!success) throw playerAlreadySetException.create(player, mode.id)
                     }
                     it.source.sendFeedback(
                         Text.translatable("command.neutron.player.${mode.id}.success", player.name),

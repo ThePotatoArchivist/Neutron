@@ -44,10 +44,12 @@ class NeutronState() : PersistentState() {
         private const val ENABLED_PLAYERS_KEY = "EnabledPlayers"
         private const val DISABLED_PLAYERS_KEY = "DisabledPlayers"
 
+        private val type = Type(::NeutronState, ::NeutronState, null)
+
         operator fun get(server: MinecraftServer): NeutronState {
             val persistentStateManager = server.getWorld(World.OVERWORLD)!!.persistentStateManager
 
-            val state = persistentStateManager.getOrCreate(::NeutronState, ::NeutronState, Neutron.MOD_ID)
+            val state = persistentStateManager.getOrCreate(type, Neutron.MOD_ID)
 
             state.markDirty()
 
