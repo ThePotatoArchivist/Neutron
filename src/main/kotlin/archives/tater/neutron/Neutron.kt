@@ -19,6 +19,7 @@ object Neutron : ModInitializer {
 	@JvmStatic
 	fun shouldKeepHostile(entity: LivingEntity): Boolean {
 		return when(entity) {
+			is PillagerEntity -> false
 			is WitherSkeletonEntity, is PiglinBruteEntity, is GuardianEntity, is ShulkerEntity, is IllagerEntity, is WardenEntity, is WitherEntity -> true
 			else -> false
 		}
