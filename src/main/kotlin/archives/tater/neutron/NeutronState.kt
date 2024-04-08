@@ -36,7 +36,7 @@ class NeutronState() : PersistentState() {
 
     fun shouldBeNeutralTo(entity: LivingEntity): Boolean {
         if (entity !is PlayerEntity) return false
-        return if (globalEnabled) !disabledPlayers.contains(entity.uuid) else enabledPlayers.contains(entity.uuid)
+        return if (globalEnabled) entity.uuid !in disabledPlayers else entity.uuid in enabledPlayers
     }
 
     companion object {

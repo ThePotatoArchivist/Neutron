@@ -5,7 +5,6 @@ import archives.tater.neutron.NeutronState;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +28,7 @@ public class ActiveTargetGoalMixin {
             index = 0
     )
     private <T> Predicate<LivingEntity> checkAngerable(@Nullable Predicate<LivingEntity> predicate, @Local(argsOnly = true) Class<T> targetClass, @Local(argsOnly = true) MobEntity mob) {
-        Neutron.logger.info("{}", mob.getType().getName());
-        if (!targetClass.isAssignableFrom(PlayerEntity.class) || mob instanceof WitherEntity) return predicate;
+        if (!targetClass.isAssignableFrom(PlayerEntity.class) || Neutron.shouldKeepHostile(mob)) return predicate;
 
         return predicate == null ? this::shouldAttack : predicate.and(this::shouldAttack);
 

@@ -1,11 +1,15 @@
 {
-  "command.neutron.global.enable": "Neutral mode enabled globally",
+  "command.neutron.global.enable": "Neutral mode is enabled globally",
+  "command.neutron.global.enable.success": "Neutral mode enabled globally",
   "command.neutron.global.enable.fail": "Neutral mode already enabled globally",
-  "command.neutron.global.disable": "Neutral mode disabled globally",
+  "command.neutron.global.disable": "Neutral mode is disabled globally",
+  "command.neutron.global.disable.success": "Neutral mode disabled globally",
   "command.neutron.global.disable.fail": "Neutral mode already disabled globally",
-  "command.neutron.player.enable": "Added %s to neutral enabled list",
+  "command.neutron.player.enable": "Neutral mode is enabled for %s",
+  "command.neutron.player.enable.success": "Enabled neutral mode for %s",
   "command.neutron.player.enable.fail": "%s is already on neutral enabled list",
   "command.neutron.player.disable": "Added %s to neutral disabled list",
+  "command.neutron.player.disable.success": "Added %s to neutral disabled list",
   "command.neutron.player.disable.fail": "%s is already on neutral disabled list",
   "command.neutron.reset": "Cleared neutral enabled & disabled lists"
 }

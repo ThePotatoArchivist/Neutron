@@ -1,14 +1,16 @@
 {
-	"required": true,
-	"package": "archives.tater.neutron.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"ActiveTargetGoalMixin",
-		"PiglinSpecificSensorMixin",
-		"WitherEntityMixin",
-		"ZoglinEntityMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "archives.tater.neutron.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ActiveTargetGoalMixin",
+    "HoglinBrainMixin",
+    "HoglinEntityMixin",
+    "NearestPlayersSensorMixin",
+    "PiglinSpecificSensorMixin",
+    "ZoglinEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }
