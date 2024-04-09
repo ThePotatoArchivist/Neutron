@@ -20,7 +20,7 @@ object Neutron : ModInitializer {
 	fun shouldKeepHostile(entity: LivingEntity): Boolean {
 		return when(entity) {
 			is PillagerEntity -> false
-			is WitherSkeletonEntity, is PiglinBruteEntity, is GuardianEntity, is ShulkerEntity, is IllagerEntity, is WardenEntity, is WitherEntity -> true
+			is WitherSkeletonEntity, is PiglinBruteEntity, is GuardianEntity, is ShulkerEntity, is IllagerEntity, is RavagerEntity, is VexEntity, is WardenEntity, is WitherEntity -> true
 			else -> false
 		}
 	}
