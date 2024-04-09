@@ -38,6 +38,8 @@ fun neutronCommands(
 ) {
 
     dispatcher.command("neutron") {
+        requires { it.hasPermissionLevel(3) }
+
         sub("global") {
             executes {
                 it.source.sendFeedback(Text.translatable("command.neutron.global.${if(NeutronState[it].globalEnabled) "enable" else "disable"}"), false)
