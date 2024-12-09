@@ -4,11 +4,12 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ActiveTargetGoalMixin",
-    "HoglinBrainMixin",
-    "HoglinEntityMixin",
+    "EnderDragonEntityMixin",
+    "HoldingPatternPhaseMixin",
     "NearestPlayersSensorMixin",
     "PhantomFindTargetGoalMixin",
     "PiglinSpecificSensorMixin",
+    "WitherEntityMixin",
     "ZoglinEntityMixin"
   ],
   "injectors": {
