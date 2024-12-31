@@ -1,10 +1,10 @@
 package archives.tater.neutron.mixin;
 
 import archives.tater.neutron.Neutron;
-import archives.tater.neutron.NeutronState;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
+import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -16,10 +16,14 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import java.util.function.Predicate;
 
 @Mixin(ActiveTargetGoal.class)
-public class ActiveTargetGoalMixin {
+public abstract class ActiveTargetGoalMixin extends TrackTargetGoal {
+    public ActiveTargetGoalMixin(MobEntity mob, boolean checkVisibility) {
+        super(mob, checkVisibility);
+    }
+
     @Unique
     private boolean shouldAttack(LivingEntity target) {
-        return !NeutronState.beNeutralTo(target);
+        return !Neutron.beNeutralTo(mob, target);
     }
 
     @ModifyArg(

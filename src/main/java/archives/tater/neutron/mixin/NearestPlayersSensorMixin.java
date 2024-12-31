@@ -1,7 +1,6 @@
 package archives.tater.neutron.mixin;
 
 import archives.tater.neutron.Neutron;
-import archives.tater.neutron.NeutronState;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +18,6 @@ public class NearestPlayersSensorMixin {
             at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;", ordinal = 0)
     )
     private Stream<ServerPlayerEntity> checkNonNeutral(Stream<ServerPlayerEntity> original, @Local(argsOnly = true) LivingEntity entity) {
-        return Neutron.shouldKeepHostile(entity) ? original : original.filter(player -> !NeutronState.beNeutralTo(player));
+        return Neutron.shouldKeepHostile(entity) ? original : original.filter(player -> !Neutron.beNeutralTo(entity, player));
     }
 }

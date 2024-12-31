@@ -1,12 +1,17 @@
 package archives.tater.neutron
 
+import archives.tater.neutron.api.ShouldBeNeutralCallback
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.mob.ZombieEntity
+import net.minecraft.item.Items
 import net.minecraft.registry.Registries
+import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,6 +30,10 @@ object Neutron : ModInitializer {
 	@JvmStatic
 	fun shouldKeepHostile(entityType: EntityType<*>) = entityType in exceptions
 
+	@JvmStatic
+	fun beNeutralTo(entity: LivingEntity, target: LivingEntity) =
+		NeutronState.beNeutralTo(target) || ShouldBeNeutralCallback.EVENT.invoker().shouldBeNeutralTo(entity, target)
+
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
@@ -32,5 +41,10 @@ object Neutron : ModInitializer {
 		CommandRegistrationCallback.EVENT.register(::neutronCommands)
 
 		ArgumentTypeRegistry.registerArgumentType(Identifier(MOD_ID, "enabled_mode"), Mode.ArgumentType::class.java, ConstantArgumentSerializer.of(Mode::ArgumentType))
+
+		if (FabricLoader.getInstance().isDevelopmentEnvironment)
+			ShouldBeNeutralCallback.registerPlayer { entity, target ->
+				entity is ZombieEntity && Hand.entries.any { target.getStackInHand(it).isOf(Items.TOTEM_OF_UNDYING) }
+			}
 	}
 }
