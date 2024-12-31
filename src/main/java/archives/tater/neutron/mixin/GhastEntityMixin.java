@@ -1,5 +1,6 @@
 package archives.tater.neutron.mixin;
 
+import archives.tater.neutron.Neutron;
 import archives.tater.neutron.ai.GhastRevengeGoal;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.FlyingEntity;
@@ -22,6 +23,7 @@ public class GhastEntityMixin extends FlyingEntity {
             at = @At("TAIL")
     )
     private void addRevengeGoal(CallbackInfo ci) {
-        targetSelector.add(2, new GhastRevengeGoal((GhastEntity) (Object) this, PlayerEntity.class));
+        if (!Neutron.shouldKeepHostile(EntityType.GHAST))
+            targetSelector.add(2, new GhastRevengeGoal((GhastEntity) (Object) this, PlayerEntity.class));
     }
 }
