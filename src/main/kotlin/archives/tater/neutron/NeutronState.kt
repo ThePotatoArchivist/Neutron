@@ -60,7 +60,6 @@ class NeutronState() : PersistentState() {
             return get(context.source.server)
         }
 
-        @JvmStatic
         fun beNeutralTo(entity: LivingEntity): Boolean {
             return entity.server?.let {
                 NeutronState[it].shouldBeNeutralTo(entity)

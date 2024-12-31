@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ActiveTargetGoalMixin",
-    "EnderDragonEntityMixin",
-    "HoldingPatternPhaseMixin",
+    "GhastEntityMixin",
     "NearestPlayersSensorMixin",
     "PhantomFindTargetGoalMixin",
     "PiglinSpecificSensorMixin",

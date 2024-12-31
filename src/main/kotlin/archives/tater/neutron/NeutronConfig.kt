@@ -36,7 +36,7 @@ data class NeutronConfig(
         EntityType.ENDERMITE,
         // Bosses
         EntityType.WITHER,
-        EntityType.ENDER_DRAGON
+        // Ender dragon is unmodified
     ).map(Registries.ENTITY_TYPE::getId).toMutableList()
 ) : IConfigure {
     override val fileName: String = "neutron"
