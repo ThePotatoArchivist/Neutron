@@ -44,7 +44,7 @@ object Neutron : ModInitializer {
 		// Proceed with mild caution.
 		CommandRegistrationCallback.EVENT.register(::neutronCommands)
 
-		ArgumentTypeRegistry.registerArgumentType(Identifier(MOD_ID, "enabled_mode"), Mode.ArgumentType::class.java, ConstantArgumentSerializer.of(Mode::ArgumentType))
+		ArgumentTypeRegistry.registerArgumentType(Identifier.of(MOD_ID, "enabled_mode"), Mode.ArgumentType::class.java, ConstantArgumentSerializer.of(Mode::ArgumentType))
 
 		if (FabricLoader.getInstance().isDevelopmentEnvironment)
 			ShouldBeNeutralCallback.registerPlayer { entity, target ->

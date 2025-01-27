@@ -27,6 +27,8 @@ data class NeutronConfig(
         EntityType.BLAZE,
         // From bastion only
         EntityType.PIGLIN_BRUTE,
+        // From trial chamber only
+        EntityType.BREEZE,
         // From end city only
         EntityType.SHULKER,
         // From ender pear only

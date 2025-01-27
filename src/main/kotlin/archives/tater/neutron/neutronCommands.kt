@@ -136,7 +136,7 @@ fun neutronCommands(
                         setRandomPatrolTarget()
                     }
                     setPosition(position)
-                    initialize(world, world.getLocalDifficulty(BlockPos.ofFloored(position)), SpawnReason.PATROL, null, null)
+                    initialize(world, world.getLocalDifficulty(BlockPos.ofFloored(position)), SpawnReason.PATROL, null)
                 })
             }
 
