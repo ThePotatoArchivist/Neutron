@@ -22,7 +22,7 @@ public class ZoglinEntityMixin extends HostileEntity {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/brain/sensor/Sensor;testAttackableTargetPredicate(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/LivingEntity;)Z")
     )
     boolean checkNeutral(LivingEntity entity, LivingEntity target, Operation<Boolean> original) {
-        if (Neutron.shouldKeepHostile(EntityType.ZOGLIN)) return original.call(entity, target);
-        return !Neutron.beNeutralTo(this, target) && original.call(entity, target);
+        if (Neutron.shouldKeepHostile(entity)) return original.call(entity, target);
+        return !Neutron.beNeutralTo(entity, target) && original.call(entity, target);
     }
 }

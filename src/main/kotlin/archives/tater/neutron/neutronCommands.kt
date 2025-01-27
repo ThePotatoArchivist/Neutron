@@ -73,7 +73,7 @@ fun neutronCommands(
                             player.uuid in enabledPlayers
                         }
                     }
-                    it.source.sendFeedback(Text.translatable("command.neutron.player.$status"), false)
+                    it.source.sendFeedback(Text.translatable("command.neutron.player.$status", player.name), false)
                     0
                 }
 
@@ -82,31 +82,32 @@ fun neutronCommands(
                     val player = EntityArgumentType.getPlayer(it, "player")
 
                     NeutronState[it].run {
-                        if (mode.toBoolean()) {
-                            if (globalEnabled) {
-                                disabledPlayers.remove(player.uuid)
-                            } else {
-                                enabledPlayers.add(player.uuid)
-                            }
-                        } else {
-                            if (globalEnabled) {
-                                disabledPlayers.add(player.uuid)
-                            } else {
-                                enabledPlayers.remove(player.uuid)
-                            }
-                        }
-                    }.let { success ->
+                        val list = if (globalEnabled) disabledPlayers else enabledPlayers
+
+                        // If false, removing
+                        val adding = globalEnabled xor mode.toBoolean()
+
+                        val success = if (adding)
+                            list.add(player.uuid)
+                        else
+                            list.remove(player.uuid)
+
+                        val listName = if (globalEnabled) "disabled" else "enabled"
+                        val action = if (adding) "add" else "remove"
+
                         if (!success) throw CommandException(
                             Text.translatable(
-                                "command.neutron.player.${mode.id}.fail",
+                                "command.neutron.player.$listName.$action.fail",
                                 player.name
                             )
                         )
+
+                        it.source.sendFeedback(
+                            Text.translatable("command.neutron.player.$listName.$action.success", player.name),
+                            true
+                        )
                     }
-                    it.source.sendFeedback(
-                        Text.translatable("command.neutron.player.${mode.id}.success", player.name),
-                        true
-                    )
+
                     1
                 }
             }

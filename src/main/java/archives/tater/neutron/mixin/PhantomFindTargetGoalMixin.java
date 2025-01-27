@@ -2,7 +2,6 @@ package archives.tater.neutron.mixin;
 
 import archives.tater.neutron.Neutron;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.mob.PhantomEntity;
 import org.spongepowered.asm.mixin.Final;
@@ -19,7 +18,7 @@ public class PhantomFindTargetGoalMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/TargetPredicate;setBaseMaxDistance(D)Lnet/minecraft/entity/ai/TargetPredicate;")
     )
     private TargetPredicate checkNeutral(TargetPredicate original) {
-        if (Neutron.shouldKeepHostile(EntityType.PHANTOM)) return original;
+        if (Neutron.shouldKeepHostile(field_7319)) return original;
         return original.setPredicate(target -> !Neutron.beNeutralTo(this.field_7319, target));
     }
 }

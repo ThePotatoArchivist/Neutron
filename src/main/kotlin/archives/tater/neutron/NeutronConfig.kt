@@ -1,16 +1,11 @@
 package archives.tater.neutron
 
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import net.minecraft.entity.EntityType
 import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
 import org.spaceserve.config.IConfigure
+import org.spaceserve.config.serializers.IdentifierSerializer
 
 @Serializable
 data class NeutronConfig(
@@ -39,17 +34,7 @@ data class NeutronConfig(
         // Ender dragon is unmodified
     ).map(Registries.ENTITY_TYPE::getId).toMutableList()
 ) : IConfigure {
-    override val fileName: String = "neutron"
+    override val fileName get() = "neutron"
 
     override fun load() = super.load() as NeutronConfig
-
-    object IdentifierSerializer : KSerializer<Identifier> {
-        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("identifier", PrimitiveKind.STRING)
-
-        override fun deserialize(decoder: Decoder): Identifier = Identifier(decoder.decodeString())
-
-        override fun serialize(encoder: Encoder, value: Identifier) {
-            encoder.encodeString(value.toString())
-        }
-    }
 }

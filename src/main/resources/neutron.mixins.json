@@ -6,6 +6,7 @@
     "ActiveTargetGoalMixin",
     "GhastEntityMixin",
     "NearestPlayersSensorMixin",
+    "PhantomEntityMixin",
     "PhantomFindTargetGoalMixin",
     "PiglinSpecificSensorMixin",
     "WitherEntityMixin",
