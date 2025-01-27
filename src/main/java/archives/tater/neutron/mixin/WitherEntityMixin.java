@@ -28,7 +28,7 @@ public class WitherEntityMixin extends HostileEntity {
             at = @At(value = "FIELD", target = "Lnet/minecraft/entity/boss/WitherEntity;HEAD_TARGET_PREDICATE:Lnet/minecraft/entity/ai/TargetPredicate;")
     )
     private TargetPredicate checkNeutral(TargetPredicate original) {
-        if (Neutron.shouldKeepHostile(EntityType.WITHER)) return original;
+        if (Neutron.shouldKeepHostile(this)) return original;
         return original.copy().setPredicate(CAN_ATTACK_PREDICATE.and(target -> !Neutron.beNeutralTo(this, target)));
     }
 }

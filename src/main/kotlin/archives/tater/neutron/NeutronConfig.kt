@@ -1,25 +1,22 @@
 package archives.tater.neutron
 
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import net.minecraft.entity.EntityType
 import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
 import org.spaceserve.config.IConfigure
+import org.spaceserve.config.serializers.IdentifierSerializer
 
 @Serializable
 data class NeutronConfig(
+    @JvmField
     var exceptions: List<@Serializable(with = IdentifierSerializer::class) Identifier> = listOf(
-        // From woodland mansion & Raids only
+        // From woodland mansion, raids, & outposts
         EntityType.VINDICATOR,
         EntityType.EVOKER,
         EntityType.VEX,
         EntityType.RAVAGER,
+        EntityType.PILLAGER,
         // From ancient city only
         EntityType.WARDEN,
         // From Ocean monument only
@@ -37,19 +34,13 @@ data class NeutronConfig(
         // Bosses
         EntityType.WITHER,
         // Ender dragon is unmodified
-    ).map(Registries.ENTITY_TYPE::getId).toMutableList()
+    ).map(Registries.ENTITY_TYPE::getId).toMutableList(),
+    @JvmField
+    var preventEndermanEyeContact: Boolean = false,
+    @JvmField
+    var excludePatrollers: Boolean = true,
 ) : IConfigure {
-    override val fileName: String = "neutron"
+    override val fileName get() = "neutron"
 
     override fun load() = super.load() as NeutronConfig
-
-    object IdentifierSerializer : KSerializer<Identifier> {
-        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("identifier", PrimitiveKind.STRING)
-
-        override fun deserialize(decoder: Decoder): Identifier = Identifier(decoder.decodeString())
-
-        override fun serialize(encoder: Encoder, value: Identifier) {
-            encoder.encodeString(value.toString())
-        }
-    }
 }

@@ -6,16 +6,20 @@ import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
-import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType
+import com.mojang.brigadier.exceptions.Dynamic3CommandExceptionType
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.serialization.Codec
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.command.argument.EnumArgumentType
+import net.minecraft.entity.EntityType
+import net.minecraft.entity.SpawnReason
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import net.minecraft.util.StringIdentifiable
+import net.minecraft.util.math.BlockPos
 
 enum class Mode(val id: String) : StringIdentifiable {
     ENABLE("enable"),
@@ -33,7 +37,7 @@ enum class Mode(val id: String) : StringIdentifiable {
 }
 
 private val globalAlreadySetException = DynamicCommandExceptionType { mode -> Text.translatable("command.neutron.global.${mode}.fail") }
-private val playerAlreadySetException = Dynamic2CommandExceptionType { player, mode -> Text.translatable("command.neutron.player.${mode}.fail", player) }
+private val playerAlreadySetException = Dynamic3CommandExceptionType { player, listName, action -> Text.translatable("command.neutron.player.$listName.$action.fail", player) }
 
 fun neutronCommands(
     dispatcher: CommandDispatcher<ServerCommandSource>,
@@ -77,7 +81,7 @@ fun neutronCommands(
                             player.uuid in enabledPlayers
                         }
                     }
-                    it.source.sendFeedback(Text.translatable("command.neutron.player.$status"), false)
+                    it.source.sendFeedback(Text.translatable("command.neutron.player.$status", player.name), false)
                     0
                 }
 
@@ -86,26 +90,27 @@ fun neutronCommands(
                     val player = EntityArgumentType.getPlayer(it, "player")
 
                     NeutronState[it].run {
-                        if (mode.toBoolean()) {
-                            if (globalEnabled) {
-                                disabledPlayers.remove(player.uuid)
-                            } else {
-                                enabledPlayers.add(player.uuid)
-                            }
-                        } else {
-                            if (globalEnabled) {
-                                disabledPlayers.add(player.uuid)
-                            } else {
-                                enabledPlayers.remove(player.uuid)
-                            }
-                        }
-                    }.let { success ->
-                        if (!success) throw playerAlreadySetException.create(player, mode.id)
+                        val list = if (globalEnabled) disabledPlayers else enabledPlayers
+
+                        // If false, removing
+                        val adding = globalEnabled xor mode.toBoolean()
+
+                        val success = if (adding)
+                            list.add(player.uuid)
+                        else
+                            list.remove(player.uuid)
+
+                        val listName = if (globalEnabled) "disabled" else "enabled"
+                        val action = if (adding) "add" else "remove"
+
+                        if (!success) throw playerAlreadySetException.create(player.name, listName, action)
+
+                        it.source.sendFeedback(
+                            Text.translatable("command.neutron.player.$listName.$action.success", player.name),
+                            true
+                        )
                     }
-                    it.source.sendFeedback(
-                        Text.translatable("command.neutron.player.${mode.id}.success", player.name),
-                        true
-                    )
+
                     1
                 }
             }
@@ -117,6 +122,24 @@ fun neutronCommands(
                 disabledPlayers.clear()
             }
             it.source.sendFeedback(Text.translatable("command.neutron.reset"), true)
+            1
+        }
+
+        if (FabricLoader.getInstance().isDevelopmentEnvironment) subExec("debug_summonpatrol") { command ->
+            val world = command.source.world
+            val position = command.source.position
+
+            repeat(4) {
+                world.spawnEntityAndPassengers(EntityType.PILLAGER.create(world)!!.apply {
+                    if (it == 0) {
+                        isPatrolLeader = true
+                        setRandomPatrolTarget()
+                    }
+                    setPosition(position)
+                    initialize(world, world.getLocalDifficulty(BlockPos.ofFloored(position)), SpawnReason.PATROL, null, null)
+                })
+            }
+
             1
         }
     }
