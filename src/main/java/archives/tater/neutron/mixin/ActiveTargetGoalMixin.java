@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.PatrolEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +33,7 @@ public abstract class ActiveTargetGoalMixin extends TrackTargetGoal {
             index = 0
     )
     private <T> Predicate<LivingEntity> checkAngerable(@Nullable Predicate<LivingEntity> predicate, @Local(argsOnly = true) Class<T> targetClass, @Local(argsOnly = true) MobEntity mob) {
-        if (!targetClass.isAssignableFrom(PlayerEntity.class) || Neutron.shouldKeepHostile(mob)) return predicate;
+        if (!targetClass.isAssignableFrom(PlayerEntity.class) || (Neutron.shouldKeepHostile(mob) && !(mob instanceof PatrolEntity))) return predicate;
 
         return predicate == null ? this::shouldAttack : predicate.and(this::shouldAttack);
 

@@ -9,12 +9,14 @@ import org.spaceserve.config.serializers.IdentifierSerializer
 
 @Serializable
 data class NeutronConfig(
+    @JvmField
     var exceptions: List<@Serializable(with = IdentifierSerializer::class) Identifier> = listOf(
-        // From woodland mansion & Raids only
+        // From woodland mansion, raids, & outposts
         EntityType.VINDICATOR,
         EntityType.EVOKER,
         EntityType.VEX,
         EntityType.RAVAGER,
+        EntityType.PILLAGER,
         // From ancient city only
         EntityType.WARDEN,
         // From Ocean monument only
@@ -32,7 +34,11 @@ data class NeutronConfig(
         // Bosses
         EntityType.WITHER,
         // Ender dragon is unmodified
-    ).map(Registries.ENTITY_TYPE::getId).toMutableList()
+    ).map(Registries.ENTITY_TYPE::getId).toMutableList(),
+    @JvmField
+    var preventEndermanEyeContact: Boolean = false,
+    @JvmField
+    var excludePatrollers: Boolean = true,
 ) : IConfigure {
     override val fileName get() = "neutron"
 

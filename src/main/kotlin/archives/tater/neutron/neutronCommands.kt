@@ -7,14 +7,18 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.serialization.Codec
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.CommandException
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.command.argument.EnumArgumentType
+import net.minecraft.entity.EntityType
+import net.minecraft.entity.SpawnReason
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import net.minecraft.util.StringIdentifiable
+import net.minecraft.util.math.BlockPos
 
 enum class Mode(val id: String) : StringIdentifiable {
     ENABLE("enable"),
@@ -119,6 +123,24 @@ fun neutronCommands(
                 disabledPlayers.clear()
             }
             it.source.sendFeedback(Text.translatable("command.neutron.reset"), true)
+            1
+        }
+
+        if (FabricLoader.getInstance().isDevelopmentEnvironment) subExec("debug_summonpatrol") { command ->
+            val world = command.source.world
+            val position = command.source.position
+
+            repeat(4) {
+                world.spawnEntityAndPassengers(EntityType.PILLAGER.create(world)!!.apply {
+                    if (it == 0) {
+                        isPatrolLeader = true
+                        setRandomPatrolTarget()
+                    }
+                    setPosition(position)
+                    initialize(world, world.getLocalDifficulty(BlockPos.ofFloored(position)), SpawnReason.PATROL, null, null)
+                })
+            }
+
             1
         }
     }

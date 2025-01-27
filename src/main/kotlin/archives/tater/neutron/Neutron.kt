@@ -1,6 +1,7 @@
 package archives.tater.neutron
 
 import archives.tater.neutron.api.ShouldBeNeutralCallback
+import archives.tater.neutron.mixin.PatrolEntityAccessor
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -8,6 +9,7 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.mob.PatrolEntity
 import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.item.Items
 import net.minecraft.registry.Registries
@@ -21,8 +23,8 @@ object Neutron : ModInitializer {
 	@JvmField
     val logger: Logger = LoggerFactory.getLogger(MOD_ID)
 
-	// Currently no way to refresh during runtime
-	private val config = NeutronConfig().load()
+	@JvmField
+	val config = NeutronConfig().load()
 	private val exceptions = config.exceptions.map(Registries.ENTITY_TYPE::get)
 
 	@JvmStatic
@@ -32,7 +34,9 @@ object Neutron : ModInitializer {
 
 	@JvmStatic
 	fun beNeutralTo(entity: LivingEntity, target: LivingEntity) =
-		NeutronState.beNeutralTo(target) || ShouldBeNeutralCallback.EVENT.invoker().shouldBeNeutralTo(entity, target)
+		(NeutronState.beNeutralTo(target)
+				&& (!shouldKeepHostile(entity) || (config.excludePatrollers && entity is PatrolEntity && (entity as PatrolEntityAccessor).isPatrolling)))
+				|| ShouldBeNeutralCallback.EVENT.invoker().shouldBeNeutralTo(entity, target)
 
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
